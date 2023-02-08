@@ -1,0 +1,76 @@
+import React, { useState } from "react";
+
+function App2() {
+  const [input1, setInput1] = useState("");
+  const [input2, setInput2] = useState("");
+  const [generatedObjects, setGeneratedObjects] = useState([]);
+  const [editingIndex, setEditingIndex] = useState(-1);
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    if (!input1 || !input2) {
+      alert("Recuerda rellenar ambos espacios");
+    } else if (!/^\d{9}$/.test(input2)) {
+      alert("El número de teléfono debe contener 9 cifras");
+    } else if (editingIndex === -1) {
+      setGeneratedObjects([...generatedObjects, { input1, input2 }]);
+      setInput1("");
+      setInput2("");
+    } else {
+      const newGeneratedObjects = [...generatedObjects];
+      newGeneratedObjects[editingIndex] = { input1, input2 };
+      setGeneratedObjects(newGeneratedObjects);
+      setInput1("");
+      setInput2("");
+      setEditingIndex(-1);
+    }
+  };
+
+  const handleDelete = index => {
+    setGeneratedObjects(generatedObjects.filter((_, i) => i !== index));
+  };
+
+  const handleEdit = index => {
+    const { input1, input2 } = generatedObjects[index];
+    setInput1(input1);
+    setInput2(input2);
+    setEditingIndex(index);
+  };
+
+  return (
+    <div className="div-principal">
+      <form onSubmit={handleSubmit} className="div-input-botones">
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={input1}
+          onChange={e => setInput1(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Teléfono"
+          value={input2}
+          onChange={e => setInput2(e.target.value)}
+        />
+        <button type="submit">
+          {editingIndex === -1 ? "Añadir contacto" : "Editar contacto"}
+        </button>
+      </form>
+      <ul className="div-contactos">
+        {generatedObjects.map((object, index) => (
+          <li key={index}>
+            {object.input1} - {object.input2}
+            <button onClick={() => handleEdit(index)}>
+              <i className="fas fa-edit" />
+            </button>
+            <button onClick={() => handleDelete(index)}>
+              <i className="fas fa-times" />
+            </button>
+          </li>
+        ))} 
+        </ul>
+    </div>
+  );
+}
+
+export default App2;
